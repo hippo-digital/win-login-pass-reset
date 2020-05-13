@@ -1,0 +1,14 @@
+flask
+
+pycrypto
+
+redis
+
+requests
+
+mock
+
+pyyaml
+twilio
+ldap3
+#https://github.com/zakird/pyad/archive/master.zip

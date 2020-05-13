@@ -1,0 +1,46 @@
+---
+- name: Install Python 3.4.3
+  win_chocolatey: name=python version=3.4.3
+
+- name: Create temp directory
+  win_file: path=c:\\temp state=directory
+
+#- name: Download PyCrypto
+#  win_get_url: url=http://www.voidspace.org.uk/python/pycrypto-2.6.1/pycrypto-2.6.1.win-amd64-py3.4.msi dest=C:\\temp\\pycrypto-2.6.1.win-amd64-py3.4.msi
+
+- name: Install PyAD
+  win_command: C:\\\\tools\\\\python\\\\scripts\\\\pip install https://github.com/zakird/pyad/archive/master.zip creates=C:\\tools\\python\\Lib\\site-packages\\pyad
+
+- name: Install requests
+  win_command: C:\\\\tools\\\\python\\\\scripts\\\\pip install requests creates=C:\\tools\\python\\Lib\\site-packages\\requests
+
+- name: Install twilio
+  win_command: C:\\\\tools\\\\python\\\\scripts\\\\pip install twilio creates=C:\\tools\\python\\Lib\\site-packages\\twilio
+
+- name: Install PyYAML
+  win_command: C:\\\\tools\\\\python\\\\scripts\\\\pip install PyYAML creates=C:\\tools\\python\\Lib\\site-packages\\yaml
+
+- name: Install redis
+  win_command: C:\\\\tools\\\\python\\\\scripts\\\\pip install redis creates=C:\\tools\\python\\Lib\\site-packages\\redis
+
+- name: Install PyCrypto
+  win_package: path=http://www.voidspace.org.uk/python/pycrypto-2.6.1/pycrypto-2.6.1.win-amd64-py3.4.msi
+
+- name: Create working directory
+  win_file: path=C:\\password_reset_backend\\ state=directory
+
+- name: Copy backend application files
+  win_copy: src=../clean_repo/password_reset_backend/ dest=C:\\password_reset_backend\\
+
+
+
+
+- name: Run Tests
+  shell: source bin/activate; python3 -m unittest tests_integration.py 
+  args:
+    chdir: /home/pwdservice/password-self-service/integration_tests 
+    executable: /bin/bash
+  become: yes 
+  become_user: pwdservice
+
+
