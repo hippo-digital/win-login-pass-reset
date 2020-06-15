@@ -1,0 +1,4 @@
+# visual studio files
+src/.vs
+src/Debug
+src/x64
