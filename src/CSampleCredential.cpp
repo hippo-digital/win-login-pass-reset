@@ -1184,6 +1184,10 @@ HRESULT CSampleCredential::CommandLinkClicked(DWORD dwFieldID)
                                     {
                                         Stage_2_3_States(state1, state2);
                                     }
+                                    else
+                                    {
+                                        Stage_1_2_States(state1, state2);
+                                    }
                                 }
 							}
 						}

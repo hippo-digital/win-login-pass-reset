@@ -1,4 +1,4 @@
-LIBRARY SampleV2CredentialProvider.dll
+LIBRARY WinLoginPassReset.dll
 
 EXPORTS
     DllCanUnloadNow                                 PRIVATE

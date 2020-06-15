@@ -45,13 +45,16 @@ Build
 ------------------------------------------------
 - Install visual studio 2017
 - Open the .sln file
+- Change to release and x64 under Project/Properties Configuration and Configuration Manager
+- Add include path (./src/include/curl) under Project/Properties/VC++ Directories/Include Directories
+- Add lib path (./src/lib/) under Project/Properties/VC++ Directories/Library Directories
 - Build solution
 
 Install
 ------------------------------------------------
 - Copy the following files to C:\Windows\System32
-  - dll file under ./x64/release after build
-  - dll file under ./bin
+  - dll file under ./src/x64/release after build
+  - dll file under ./src/bin
 - Run .\register.reg to install
 
 Uninstall

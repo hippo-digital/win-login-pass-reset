@@ -1,7 +1,0 @@
-start visual studio command prompt -> start -> devs -> developer command prompt:
-"\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-
-go to libcurl -> winbuild:
-nmake /f Makefile.vc mode=dll WITH_DEVEL=..\..\dll64 VC=14 ENABLE_IPV6=no MACHINE=X64
-
-go to libcrul -> build -> get output from 

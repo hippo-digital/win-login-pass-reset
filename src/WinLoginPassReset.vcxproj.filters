@@ -83,7 +83,7 @@
   <ItemGroup>
     <None Include="Unregister.reg" />
     <None Include="register.reg" />
-    <None Include="samplev2credentialprovider.def">
+    <None Include="winLoginPassReset.def">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
