@@ -38,7 +38,7 @@ Error Checks
 
 Configure Python Web Server URL
 ------------------------------------------------
-- Change url url under CSamepleCredential.cpp
+- Change backendUrl in ./src/winLoginPassReset.ini
 - Currently set to http://127.0.0.1:5001
 
 Build
@@ -53,8 +53,9 @@ Build
 Install
 ------------------------------------------------
 - Copy the following files to C:\Windows\System32
-  - dll file under ./src/x64/release after build
-  - dll file under ./src/bin
+  - dll file ./src/x64/release/WinLoginPassReset.dll
+  - dll file under ./src/bin/libcurl.dll
+  - ini file ./src/WinLoginPassReset.ini
 - Run .\register.reg to install
 
 Uninstall
@@ -64,8 +65,7 @@ Uninstall
 
 TODO
 ------------------------------------------------
-- Read configs from config file
-- Tidy up files
+- Clean up backend code (new changes only)
 
 Windows login screen image
 ------------------------------------------------

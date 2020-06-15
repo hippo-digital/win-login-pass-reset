@@ -25,7 +25,14 @@
 #include "PostRequest.h"
 #include <string>
 #include "Smartcard.h"
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 
+enum
+{
+    MAX_PATH_SIZE = 256
+};
 
 class CSampleCredential : public ICredentialProviderCredential2, ICredentialProviderCredentialWithFieldOptions
 {
@@ -83,36 +90,6 @@ public:
     IFACEMETHODIMP SetCheckboxValue(DWORD, BOOL);
     IFACEMETHODIMP SetComboBoxSelectedValue(DWORD dwFieldID, DWORD dwSelectedItem);
 
-    void GrantFocus();
-    void SpawnMessageBox(LPCTSTR message, LPCTSTR caption);
-
-    int UsernameFormatCheck(std::string sUsername);
-    int Stage_1_Username_Check(PWSTR *username);
-    int AuthCodeFormatCheck(std::string sAuthCode);
-    int Stage_2_Auth_Code_Check(PWSTR *authCode);
-    int PinFormatCheck(std::string sPin);
-    int Stage_2_Pin_Check(PWSTR *pin);
-    int PasswordFormatCheck(std::string sPassword);
-    int Stage_3_Password_Check(PWSTR *password, PWSTR *passwordConfirm);
-
-    void Stage_1_Wait(int status);
-    void Stage_2_Wait(int status);
-    void Stage_3_Wait(int status);
-
-    void PostRequestErrorCheck(int *status);
-    int Stage_1_PostRequest(PWSTR username, int vResetMethod);
-    int Stage_2_PostRequest(PWSTR authCode, int vResetMethod);
-    int Stage_3_PostRequest(PWSTR password, int vResetMethod);
-
-    void SmartcardErrorCheck(int *status);
-    int SmartcardInitialise();
-    int SmartcardVerifyPin(PWSTR pin);
-    int SmartcardSigning(std::string challenge);
-
-    void Stage_1_2_States(CREDENTIAL_PROVIDER_FIELD_STATE state1, CREDENTIAL_PROVIDER_FIELD_STATE state);
-    void Stage_2_3_States(CREDENTIAL_PROVIDER_FIELD_STATE state1, CREDENTIAL_PROVIDER_FIELD_STATE state);
-    void Stage_3_1_States(CREDENTIAL_PROVIDER_FIELD_STATE state1, CREDENTIAL_PROVIDER_FIELD_STATE state2);
-
     IFACEMETHODIMP CommandLinkClicked(DWORD dwFieldID);
 
     IFACEMETHODIMP GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE *,
@@ -153,4 +130,38 @@ private:
 
     PostRequest                             postRequest;
     Smartcard                               smartcard;
+
+    std::string                             backendUrl;
+
+    void GrantFocus();
+    void SpawnMessageBox(LPCTSTR message, LPCTSTR caption);
+
+    std::string getConfigFromFile(std::string configName);
+    int CharCompare(char *lhs, char *rhs, unsigned int length);
+    int UsernameFormatCheck(std::string sUsername);
+    int Stage_1_Username_Check(PWSTR *username);
+    int AuthCodeFormatCheck(std::string sAuthCode);
+    int Stage_2_Auth_Code_Check(PWSTR *authCode);
+    int PinFormatCheck(std::string sPin);
+    int Stage_2_Pin_Check(PWSTR *pin);
+    int PasswordFormatCheck(std::string sPassword);
+    int Stage_3_Password_Check(PWSTR *password, PWSTR *passwordConfirm);
+
+    void Stage_1_Wait(int status);
+    void Stage_2_Wait(int status);
+    void Stage_3_Wait(int status);
+
+    void PostRequestErrorCheck(int *status);
+    int Stage_1_PostRequest(PWSTR username, int vResetMethod);
+    int Stage_2_PostRequest(PWSTR authCode, int vResetMethod);
+    int Stage_3_PostRequest(PWSTR password, int vResetMethod);
+
+    void SmartcardErrorCheck(int *status);
+    int SmartcardInitialise();
+    int SmartcardVerifyPin(PWSTR pin);
+    int SmartcardSigning(std::string challenge);
+
+    void Stage_1_2_States(CREDENTIAL_PROVIDER_FIELD_STATE state1, CREDENTIAL_PROVIDER_FIELD_STATE state);
+    void Stage_2_3_States(CREDENTIAL_PROVIDER_FIELD_STATE state1, CREDENTIAL_PROVIDER_FIELD_STATE state);
+    void Stage_3_1_States(CREDENTIAL_PROVIDER_FIELD_STATE state1, CREDENTIAL_PROVIDER_FIELD_STATE state2);
 };

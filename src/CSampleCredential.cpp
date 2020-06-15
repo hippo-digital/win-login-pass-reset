@@ -16,6 +16,7 @@
 #include "CSampleCredential.h"
 #include "guid.h"
 
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 enum
 {
@@ -74,6 +75,40 @@ CSampleCredential::~CSampleCredential()
     DllRelease();
 }
 
+std::string CSampleCredential::getConfigFromFile(std::string configName)
+{
+    LPTSTR configFilePath = new TCHAR[MAX_PATH_SIZE];
+    GetModuleFileName((HINSTANCE)&__ImageBase, configFilePath, MAX_PATH_SIZE);
+
+    lstrcpy(configFilePath + lstrlen(configFilePath) - 3, L"ini");
+
+    std::ifstream configFile(configFilePath);
+
+    std::string value = "";
+
+    if (configFile.is_open())
+    {
+        std::string line;
+        while (std::getline(configFile, line))
+        {
+            line.erase(std::remove_if(line.begin(), line.end(), isspace), line.end());
+            if (line[0] == '#' || line.empty()) { continue; }
+            size_t delimiterPos = line.find("=");
+            std::string name = line.substr(0, delimiterPos);
+
+            if (name == configName)
+            {
+                value = line.substr(delimiterPos + 1);
+                break;
+            }
+        }
+    }
+
+    configFile.close();
+    delete configFilePath;
+
+    return value;
+}
 
 // Initializes one credential with the field information passed in.
 // Set the value of the SFI_LARGE_TEXT field to pwzUsername.
@@ -96,6 +131,8 @@ HRESULT CSampleCredential::Initialize(CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
         _rgFieldStatePairs[i] = rgfsp[i];
         hr = FieldDescriptorCopy(rgcpfd[i], &_rgCredProvFieldDescriptors[i]);
     }
+
+    backendUrl = getConfigFromFile("backendUrl");
 
     // Initialize the String value of all the fields.
     if (SUCCEEDED(hr))
@@ -483,7 +520,7 @@ void CSampleCredential::SpawnMessageBox(LPCTSTR message, LPCTSTR caption)
     ::MessageBox(hwndHandle, message, caption, 0);
 }
 
-int CharCompare(char *lhs, char *rhs, unsigned int length)
+int CSampleCredential::CharCompare(char *lhs, char *rhs, unsigned int length)
 {
     int status = PASS_RESET_PROVIDER_SUCCESS;
 
@@ -882,13 +919,15 @@ int CSampleCredential::Stage_1_PostRequest(PWSTR username, int vResetMethod)
 
     std::string sUsername(cUsername);
 
+    std::string resetMethodUrl = backendUrl + "/reset_method";
+
     if (vResetMethod == MPC_AUTHENTICATION)
     {
-        status = postRequest.FirstStagePost("http://127.0.0.1:5001/reset_method", sUsername, vResetMethod, "");
+        status = postRequest.FirstStagePost((char *) resetMethodUrl.c_str(), sUsername, vResetMethod, "");
     }
     else if (vResetMethod == SC_AUTHENTICATION)
     {
-        status = postRequest.FirstStagePost("http://127.0.0.1:5001/reset_method", sUsername, vResetMethod, smartcard.sID);
+        status = postRequest.FirstStagePost((char *)resetMethodUrl.c_str(), sUsername, vResetMethod, smartcard.sID);
     }
 
     PostRequestErrorCheck(&status);
@@ -909,13 +948,16 @@ int CSampleCredential::Stage_2_PostRequest(PWSTR authCode, int vResetMethod)
         char cAuthCode[MAX_AUTH_CODE_SIZE] = { '\0' };
         snprintf(cAuthCode, MAX_AUTH_CODE_SIZE, "%ws", authCode);
 
+        std::string codeUrl = backendUrl + "/code";
         std::string sAuthCode(cAuthCode);
 
-        status = postRequest.SecondStageMPCPost("http://127.0.0.1:5001/code", sAuthCode);
+        status = postRequest.SecondStageMPCPost((char *) codeUrl.c_str(), sAuthCode);
     }
     else if (vResetMethod == SC_AUTHENTICATION)
     {
-        status = postRequest.SecondStageSCPost("http://127.0.0.1:5001/spineverify", smartcard.sID, smartcard.pSignedChallenge,
+        std::string spineVerifyUrl = backendUrl + "/spineverify";
+
+        status = postRequest.SecondStageSCPost((char *) spineVerifyUrl.c_str(), smartcard.sID, smartcard.pSignedChallenge,
                                                smartcard.signedChallengeSize, smartcard.pCertificate, smartcard.certificateSize);
     }
 
@@ -939,11 +981,15 @@ int CSampleCredential::Stage_3_PostRequest(PWSTR password, int vResetMethod)
 
     if (vResetMethod == MPC_AUTHENTICATION)
     {
-        status = postRequest.ThirdStageMPCPost("http://127.0.0.1:5001/reset", sPassword);
+        std::string resetUrl = backendUrl + "/reset";
+
+        status = postRequest.ThirdStageMPCPost((char *) resetUrl.c_str(), sPassword);
     }
     else if (vResetMethod == SC_AUTHENTICATION)
     {
-        status = postRequest.ThirdStageSCPost("http://127.0.0.1:5001/resetwithsmartcard", smartcard.sID, sPassword);
+        std::string resetWithScUrl = backendUrl + "/resetwithsmartcard";
+
+        status = postRequest.ThirdStageSCPost((char *) resetWithScUrl.c_str(), smartcard.sID, sPassword);
     }
 
     PostRequestErrorCheck(&status);
