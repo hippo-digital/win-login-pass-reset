@@ -1,7 +1,0 @@
-flask
-pycrypto
-redis
-requests
-mock
-pyyaml
-
