@@ -267,7 +267,7 @@ int PostRequest::ThirdStageMPCPost(char *pUrl, std::string sPassword)
     passwordConfirm = password;
 
     postParameters = (char*)calloc(MAX_POST_DATA_SIZE, sizeof(char));
-    snprintf(postParameters, MAX_POST_DATA_SIZE, "evidence=%s&id=%s&username=%s&password=%s&password-confirm=%s&unknownpadding=0",
+    snprintf(postParameters, MAX_POST_DATA_SIZE, "evidence=%s&id=%s&username=%s&password=%s&password-confirm=%s&unlock=on&unknownpadding=0",
                                             evidence.c_str(), sessionID.c_str(), username.c_str(), password.c_str(), passwordConfirm.c_str());
 
     PrepareAndPerform(pUrl);
@@ -363,7 +363,7 @@ int PostRequest::ThirdStageSCPost(char *pUrl, std::string sID, std::string sPass
     passwordConfirm = password;
 
     postParameters = (char*)calloc(MAX_POST_DATA_SIZE, sizeof(char));
-    snprintf(postParameters, MAX_POST_DATA_SIZE, "uid=%s&id=%s&username=%s&sso_ticket=%s&sso_logout_url=%s&password=%s&password-confirm=%s&unknownpadding=0",
+    snprintf(postParameters, MAX_POST_DATA_SIZE, "uid=%s&id=%s&username=%s&sso_ticket=%s&sso_logout_url=%s&password=%s&password-confirm=%s&unlock=on&unknownpadding=0",
                          sID.c_str(), sessionID.c_str(), username.c_str(), sso_ticket.c_str(), sso_logout_url.c_str(), password.c_str(), passwordConfirm.c_str());
 
     PrepareAndPerform(pUrl);
